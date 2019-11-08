@@ -37,6 +37,7 @@ parameters:
     description: Regular expression to split records.
     default: '\n|\r|\r\n'
 steps:
+  - jq/install
   - run:
       name: Send to Coralogix
       when: always

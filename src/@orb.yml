@@ -3,3 +3,5 @@ description: |
   CircleCI orb for integration with Coralogix.
   Website: coralogix.com
   Repo: https://github.com/coralogix-circleci/coralogix-orb
+orbs:
+  jq: circleci/jq@1.9.0
