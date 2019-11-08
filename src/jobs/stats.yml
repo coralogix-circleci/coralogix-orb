@@ -12,7 +12,11 @@ parameters:
   subsystem:
     type: string
     description: Your subsystem name.
-    default: workflow
+    default: workflow-stats
+  hostname:
+    type: string
+    description: Machine hostname.
+    default: "$(hostname)"
   category:
     type: string
     description: Records category.
@@ -23,13 +27,19 @@ parameters:
       Enter your CircleCI Personal Access Token for interacting with the API.
       You may generate one here: https://circleci.com/account/api
     default: CIRCLE_TOKEN
+  keep_artifacts:
+    type: boolean
+    description: Keep generated workflow data.
+    default: false
 executor: default
 steps:
   - workflow:
       circle-token: <<parameters.circle-token>>
+      keep_artifacts: <<parameters.keep_artifacts>>
   - send:
       file: /tmp/coralogix/workflow-stats.log
       private_key: <<parameters.private_key>>
       application: <<parameters.application>>
       subsystem: <<parameters.subsystem>>
       category: <<parameters.category>>
+      hostname: <<parameters.hostname>>
