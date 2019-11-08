@@ -16,6 +16,10 @@ parameters:
     type: string
     description: Your subsystem name.
     default: workflow
+  hostname:
+    type: string
+    description: Machine hostname.
+    default: "$(hostname)"
   category:
     type: string
     description: Records category.
@@ -55,20 +59,25 @@ steps:
           LOG_BULK=$(jq -nMc \
             --rawfile lines "$bulk" \
             --arg private_key "${<<parameters.private_key>>}" \
-            --arg hostname "$(hostname)" \
+            --arg application "<<parameters.application>>" \
+            --arg subsystem "<<parameters.subsystem>>" \
+            --arg hostname "<<parameters.hostname>>" \
+            --arg category "<<parameters.category>>" \
+            --arg class "<<parameters.class>>" \
+            --arg method "<<parameters.method>>" \
             --arg thread "<<parameters.thread>>" '{
             "privateKey": $private_key,
-            "applicationName": "<<parameters.application>>",
-            "subsystemName": "<<parameters.subsystem>>",
+            "applicationName": $application,
+            "subsystemName": $subsystem,
             "computerName": $hostname,
             "logEntries": [
               $lines | split("<<parameters.newline_pattern>>"; "") | to_entries | .[] | {
                 "timestamp": (now * 1000 + .key),
                 "severity": 3,
                 "text": .value | select(.!=""),
-                "category": "<<parameters.category>>",
-                "className": "<<parameters.class>>",
-                "methodName": "<<parameters.method>>",
+                "category": $category,
+                "className": $class,
+                "methodName": $method,
                 "threadId": $thread
               }
             ]

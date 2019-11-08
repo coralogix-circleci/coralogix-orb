@@ -13,6 +13,10 @@ parameters:
     type: string
     description: Your subsystem name.
     default: workflow-logs
+  hostname:
+    type: string
+    description: Machine hostname.
+    default: "$(hostname)"
   category:
     type: string
     description: Records category.
@@ -38,3 +42,4 @@ steps:
       application: <<parameters.application>>
       subsystem: <<parameters.subsystem>>
       category: <<parameters.category>>
+      hostname: <<parameters.hostname>>
