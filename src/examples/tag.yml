@@ -1,0 +1,36 @@
+description: |
+  Push tag to Coralogix.
+usage:
+  version: 2.1
+  orbs:
+    coralogix: coralogix/coralogix@x.y.z
+  jobs:
+    build:
+      docker:
+        - image: cimg/base:stable
+      steps:
+        - run: echo "Build the application"
+    test:
+      docker:
+        - image: cimg/base:stable
+      steps:
+        - run: echo "Test the application"
+    deploy:
+      docker:
+        - image: cimg/base:stable
+      steps:
+        - run: echo "Deploy the application"
+        - coralogix/tag:
+            tag: v1.0.0
+            application: MyApp
+            subsystems: frontend,backend
+  workflows:
+    your-workflow:
+      jobs:
+        - build
+        - test:
+            requires:
+              - build
+        - deploy:
+            requires:
+              - test

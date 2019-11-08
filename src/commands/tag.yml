@@ -1,0 +1,30 @@
+description: |
+  Push tag to Coralogix.
+parameters:
+  private_key:
+    type: env_var_name
+    description: Coralogix Private Key.
+    default: CORALOGIX_PRIVATE_KEY
+  tag:
+    type: string
+    description: Your version tag name.
+  application:
+    type: string
+    description: Your application name.
+  subsystems:
+    type: string
+    description: |
+      Your subsystem names.
+      You can input more than one subsystem name, use comma delimiter ','  between subsystems names.
+  icon:
+    type: string
+    description: |
+      Your own tag picture.
+      URL to a valid image file that you have uploaded to a public repository (png, jpeg, SVG).
+      Max size 50KB.
+    default: ""
+steps:
+  - run:
+      name: Push Coralogix Tag
+      command: |
+        curl "https://api.coralogix.com/api/v1/addTag?key=${<<parameters.private_key>>}&application=<<parameters.application>>&subsystem=<<parameters.subsystems>>&name=<<parameters.tag>>&iconUrl=<<parameters.icon>>"

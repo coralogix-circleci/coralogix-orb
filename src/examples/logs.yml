@@ -1,0 +1,17 @@
+description: |
+  Send Workflow logs to Coralogix.
+usage:
+  version: 2.1
+  orbs:
+    coralogix: coralogix/coralogix@x.y.z
+  jobs:
+    build:
+      docker:
+        - image: cimg/base:stable
+      steps:
+        - run: echo "Typical build job"
+  workflows:
+    your-workflow:
+      jobs:
+        - build
+        - coralogix/logs

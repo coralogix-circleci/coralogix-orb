@@ -1,0 +1,14 @@
+description: |
+  Default environment for Coralogix.
+parameters:
+  image:
+    type: string
+    description: Docker image name
+    default: cimg/base
+  tag:
+    type: string
+    description: Docker image tag
+    default: stable
+docker:
+  - image: <<parameters.image>>:<<parameters.tag>>
+resource_class: small

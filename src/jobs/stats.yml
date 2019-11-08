@@ -1,0 +1,35 @@
+description: |
+  Send Workflow stats to Coralogix.
+parameters:
+  private_key:
+    type: env_var_name
+    description: Coralogix Private Key.
+    default: CORALOGIX_PRIVATE_KEY
+  application:
+    type: string
+    description: Your application name.
+    default: CircleCI
+  subsystem:
+    type: string
+    description: Your subsystem name.
+    default: workflow
+  category:
+    type: string
+    description: Records category.
+    default: stats
+  circle-token:
+    type: env_var_name
+    description: |
+      Enter your CircleCI Personal Access Token for interacting with the API.
+      You may generate one here: https://circleci.com/account/api
+    default: CIRCLE_TOKEN
+executor: default
+steps:
+  - workflow:
+      circle-token: <<parameters.circle-token>>
+  - send:
+      file: /tmp/coralogix/workflow-stats.log
+      private_key: <<parameters.private_key>>
+      application: <<parameters.application>>
+      subsystem: <<parameters.subsystem>>
+      category: <<parameters.category>>
