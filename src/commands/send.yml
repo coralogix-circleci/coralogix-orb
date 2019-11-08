@@ -16,6 +16,10 @@ parameters:
     type: string
     description: Your subsystem name.
     default: workflow
+  hostname:
+    type: string
+    description: Machine hostname.
+    default: "$(hostname)"
   category:
     type: string
     description: Records category.
@@ -31,12 +35,13 @@ parameters:
   thread:
     type: string
     description: Thread.
-    default: ''
+    default: "${CIRCLE_WORKFLOW_ID}"
   newline_pattern:
     type: string
     description: Regular expression to split records.
     default: '\n|\r|\r\n'
 steps:
+  - jq/install
   - run:
       name: Send to Coralogix
       when: always
@@ -51,20 +56,29 @@ steps:
           split -C 2M -d "$LOG_FILE" ''
         popd
         for bulk in $LOG_BULKS/*; do
-          LOG_BULK=$(jq -nMc --rawfile lines "$bulk" --arg private_key ${<<parameters.private_key>>} '{
+          LOG_BULK=$(jq -nMc \
+            --rawfile lines "$bulk" \
+            --arg private_key "${<<parameters.private_key>>}" \
+            --arg application "<<parameters.application>>" \
+            --arg subsystem "<<parameters.subsystem>>" \
+            --arg hostname "<<parameters.hostname>>" \
+            --arg category "<<parameters.category>>" \
+            --arg class "<<parameters.class>>" \
+            --arg method "<<parameters.method>>" \
+            --arg thread "<<parameters.thread>>" '{
             "privateKey": $private_key,
-            "applicationName": "<<parameters.application>>",
-            "subsystemName": "<<parameters.subsystem>>",
-            "computerName": "CircleCI",
+            "applicationName": $application,
+            "subsystemName": $subsystem,
+            "computerName": $hostname,
             "logEntries": [
-              $lines | split("<<parameters.newline_pattern>>"; "") | {
-                "timestamp": (now * 1000),
+              $lines | split("<<parameters.newline_pattern>>"; "") | to_entries | .[] | {
+                "timestamp": (now * 1000 + .key),
                 "severity": 3,
-                "text": .[] | select(.!=""),
-                "category": "<<parameters.category>>",
-                "className": "<<parameters.class>>",
-                "methodName": "<<parameters.method>>",
-                "threadId": "<<parameters.thread>>"
+                "text": .value | select(.!=""),
+                "category": $category,
+                "className": $class,
+                "methodName": $method,
+                "threadId": $thread
               }
             ]
           }')
