@@ -7,33 +7,49 @@ parameters:
       Enter your CircleCI Personal Access Token for interacting with the API.
       You may generate one here: https://circleci.com/account/api
     default: CIRCLE_TOKEN
+  keep_artifacts:
+    type: boolean
+    description: Keep generated workflow data.
+    default: false
 steps:
   - run:
       name: Build workflow data
       when: always
       command: |
-        WORKFLOW=$(curl -s -H "Circle-Token: <<parameters.circle-token>>" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID")
-        WORKFLOW_JOBS=$(curl -s -H "Circle-Token: <<parameters.circle-token>>" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID/jobs" | jq '.items')
+        WORKFLOW=$(curl -s -H "Circle-Token: ${<<parameters.circle-token>>}" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID")
+        WORKFLOW_JOBS=$(curl -s -H "Circle-Token: ${<<parameters.circle-token>>}" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID/jobs" | jq '.items')
         WORKFLOW_LENGTH=$(echo "$WORKFLOW_JOBS" | jq 'length')
         PROJECT_SLUG=$(echo "$WORKFLOW" | jq -r '.project_slug')
 
         mkdir -p /tmp/coralogix
         rm -f /tmp/coralogix/workflow-*.log
         for (( i=0; i<$WORKFLOW_LENGTH; )); do
+            WORKFLOW_JOBS=$(curl -s -H "Circle-Token: ${<<parameters.circle-token>>}" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID/jobs" | jq '.items')
             JOB_NUMBER=$(echo "$WORKFLOW_JOBS" | jq -r "sort_by(.job_number) | .[$i].job_number")
             JOB_STATUS=$(echo "$WORKFLOW_JOBS" | jq -r "sort_by(.job_number) | .[$i].status")
-            if [[ $CIRCLE_JOB != coralogix/* ]]; then
-                if [ "$JOB_STATUS" != "running" ]; then
-                    JOB=$(curl -s -H "Circle-Token: <<parameters.circle-token>>" "https://circleci.com/api/v1.1/project/$PROJECT_SLUG/$JOB_NUMBER" | jq)
+            JOB_NAME=$(echo "$WORKFLOW_JOBS" | jq -r "sort_by(.job_number) | .[$i].name")
+            if [[ $JOB_NAME != coralogix/* ]]; then
+                if [ "$JOB_STATUS" != "running" ] && [ "$JOB_STATUS" != "blocked" ]; then
+                    echo "Collecting data for job $JOB_NAME..."
+                    JOB=$(curl -s -H "Circle-Token: ${<<parameters.circle-token>>}" "https://circleci.com/api/v1.1/project/$PROJECT_SLUG/$JOB_NUMBER")
                     JOB_LOGS=$(echo "$JOB" | jq '.steps[].actions[].output_url | select(.!=null)')
+                    if [ -z "$JOB_LOGS" ]; then
+                        sleep 10
+                        continue
+                    fi
                     echo "$JOB" | jq -c 'del(.steps, .circle_yml)' >> /tmp/coralogix/workflow-stats.log
                     echo "$JOB_LOGS" | xargs -n1 curl -s --output - --compressed | jq -r '.[].message' >> /tmp/coralogix/workflow-logs.log
+                    i="$((i+1))"
                 else
-                    echo "Job is still running..."
+                    echo "Job $JOB_NAME is $JOB_STATUS..."
                     sleep 10
                 fi
+            else
+                i="$((i+1))"
             fi
-            WORKFLOW_JOBS=$(curl -s -H "Circle-Token: <<parameters.circle-token>>" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID/jobs" | jq '.items')
-            i="$((i+1))"
         done
-        ls -l /tmp/coralogix
+  - when:
+      condition: <<parameters.keep_artifacts>>
+      steps:
+        - store_artifacts:
+            path: /tmp/coralogix
