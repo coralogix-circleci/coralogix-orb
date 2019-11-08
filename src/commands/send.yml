@@ -41,6 +41,7 @@ steps:
       name: Send to Coralogix
       when: always
       command: |
+        jq --version
         if [ ! -f "<<parameters.file>>" ]; then
             echo "File not found!"
             exit 0
