@@ -1,7 +1,9 @@
 version: 2.1
 description: |
   CircleCI orb for integration with Coralogix.
+  Send your workflow data and tag your application versions.
   Website: coralogix.com
+  Learn More: https://coralogix.com/category/tutorials/
   Repo: https://github.com/coralogix-circleci/coralogix-orb
 orbs:
   jq: circleci/jq@1.9.0

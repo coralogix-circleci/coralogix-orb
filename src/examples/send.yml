@@ -1,5 +1,6 @@
 description: |
-  Send logs to Coralogix.
+  Send logs file to Coralogix.
+  This function helps to send files with data directly to Coralogix.
 usage:
   version: 2.1
   orbs:

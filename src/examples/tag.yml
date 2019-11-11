@@ -1,5 +1,6 @@
 description: |
-  Push tag to Coralogix.
+  Push your version tag to Coralogix.
+  Learn More: https://coralogix.com/tutorials/software-builds-display/
 usage:
   version: 2.1
   orbs:

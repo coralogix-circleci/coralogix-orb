@@ -1,5 +1,5 @@
 description: |
-  Send logs to Coralogix.
+  Send logs file to Coralogix.
 parameters:
   file:
     type: string
