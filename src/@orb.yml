@@ -1,7 +1,6 @@
 version: 2.1
 description: |
-  CircleCI orb for integration with Coralogix.
-  Send your workflow data and tag your application versions.
+  Integrate Coralogix with CircleCI pipeline to automatically analyze version upgrades for their impact on overall system quality.
   Website: coralogix.com
   Learn More: https://coralogix.com/category/tutorials/
   Repo: https://github.com/coralogix-circleci/coralogix-orb
