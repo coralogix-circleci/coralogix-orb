@@ -1,5 +1,6 @@
 description: |
-  Push tag to Coralogix.
+  Push your version tag to Coralogix.
+  Learn More: https://coralogix.com/tutorials/software-builds-display/
 parameters:
   private_key:
     type: env_var_name
