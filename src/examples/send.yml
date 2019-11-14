@@ -1,52 +1,7 @@
 description: |
-  This example shows how you can send additional 3rd party logs generated during your workflow job to Coralogix. By adding our Orb and the coralogix/send step, you can send additional logs from an external file to your Coralogix account.
+  This example shows how you can send additional 3rd party logs generated during your workflow job to Coralogix.
+  By adding our Orb and the coralogix/send step, you can send additional logs from an external file to your Coralogix account.
   This is especially useful if one of the stages of your job generates an external file with logs which you'd like to report to Coralogix and analyze along with the rest of your logs.
-
-  Required environment variables:
-    private_key:
-      description: Private key provided by Coralogix (under Settings --> Send Your Logs).
-
-  Required parameters:
-    file:
-      type: string
-      description: Absolute or relative path to the file for sending.
-
-  Parameters for changeing behavior:
-    newline_pattern:
-      type: string
-      description: Regular expression to split records in the file.
-      default: '\n|\r|\r\n'
-
-  Changing the log metadata:
-    application:
-      type: string
-      description: Your application name.
-      default: CircleCI
-    subsystem:
-      type: string
-      description: Your subsystem name.
-      default: workflow-stats
-    hostname:
-      type: string
-      description: Machine hostname.
-      default: "$(hostname)"
-    category:
-      type: string
-      description: The log's category.
-      default: stats
-    class:
-      type: string
-      description: The log's class name.
-      default: ''
-    method:
-      type: string
-      description: The log's method name.
-      default: ''
-    thread:
-      type: string
-      description: Thread ID reported with the log.
-      default: "${CIRCLE_WORKFLOW_ID}"
-
 usage:
   version: 2.1
   orbs:

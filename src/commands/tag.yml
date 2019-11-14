@@ -1,7 +1,6 @@
 description: |
   This command is used to create a tag (and a report) for the workflow in Coralogix, helping you understand what effect it has on your production.
   Learn more at https://coralogix.com/tutorials/software-builds-display/
-
 parameters:
   private_key:
     type: env_var_name

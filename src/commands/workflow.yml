@@ -1,5 +1,5 @@
 description: |
-  For internal use only. Defines the command to help ship workflow logs to Coralogix.
+  Defines the command to help ship workflow logs to Coralogix.
 parameters:
   circle-token:
     type: env_var_name
