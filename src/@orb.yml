@@ -1,8 +1,13 @@
 version: 2.1
 description: |
-  Integrate Coralogix with CircleCI pipeline to automatically analyze version upgrades for their impact on overall system quality.
-  Website: coralogix.com
-  Learn More: https://coralogix.com/category/tutorials/
-  Repo: https://github.com/coralogix-circleci/coralogix-orb
+  Integrate your CircleCI workflows and jobs pipeline with Coralogix to automatically receive reports and analyze version upgrades for their impact on the overall quality of your production system.
+  Coralogix Orb provides four tools at your disposal:
+    coralogix/stats (job) - send the final report of a workflow job to Coralogix.
+    coralogix/logs (job) - send logs of workflow jobs to Coralogix for debugging.
+    coralogix/send (command) - send additional 3rd party logs generated during your workflow job to Coralogix.
+    coralogix/tag (command) - create a tag (and a report) for the workflow in Coralogix.
+  Website: http:/www.coralogix.com
+  Learn more: https://coralogix.com/category/tutorials/
+  Repository: https://github.com/coralogix-circleci/coralogix-orb
 orbs:
   jq: circleci/jq@1.9.0

@@ -1,5 +1,5 @@
 description: |
-  Default environment for Coralogix.
+  For internal use only. Describes a docker image for the executor to run.
 parameters:
   image:
     type: string

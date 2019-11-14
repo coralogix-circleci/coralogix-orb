@@ -1,10 +1,19 @@
 description: |
-  Send Workflow stats to Coralogix.
+  This job is used to get the final report of a workflow job in Coralogix where you can analyzea and aggregate the results.
 parameters:
+  circle-token:
+    type: env_var_name
+    description: |
+      Your CircleCI personal access token for interacting with the API.
+      You can generate one here: https://circleci.com/account/api
   private_key:
     type: env_var_name
-    description: Coralogix Private Key.
+    description: Private key provided by Coralogix (under Settings --> Send Your Logs).
     default: CORALOGIX_PRIVATE_KEY
+  keep_artifacts:
+    type: boolean
+    description: Keep temporary log files generated during the job after being sent to coralogix.
+    default: false
   application:
     type: string
     description: Your application name.
@@ -12,25 +21,16 @@ parameters:
   subsystem:
     type: string
     description: Your subsystem name.
-    default: workflow-stats
+    default: workflow-logs
   hostname:
     type: string
     description: Machine hostname.
     default: "$(hostname)"
   category:
     type: string
-    description: Records category.
-    default: stats
-  circle-token:
-    type: env_var_name
-    description: |
-      Enter your CircleCI Personal Access Token for interacting with the API.
-      You may generate one here: https://circleci.com/account/api
+    description: The log's category.
+    default: logs
     default: CIRCLE_TOKEN
-  keep_artifacts:
-    type: boolean
-    description: Keep generated workflow data.
-    default: false
 executor: default
 steps:
   - workflow:
