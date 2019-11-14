@@ -1,12 +1,16 @@
 description: |
-  Send logs file to Coralogix.
+  This command is used to send additional 3rd party logs generated during your workflow job to Coralogix.
 parameters:
   file:
     type: string
     description: Absolute or relative path to the file for sending.
+  newline_pattern:
+    type: string
+    description: Regular expression to split records in the file.
+    default: '\n|\r|\r\n'
   private_key:
     type: env_var_name
-    description: Coralogix Private Key.
+    description: Private key provided by Coralogix (under Settings --> Send Your Logs).
     default: CORALOGIX_PRIVATE_KEY
   application:
     type: string
@@ -22,24 +26,20 @@ parameters:
     default: "$(hostname)"
   category:
     type: string
-    description: Records category.
+    description: The log's category.
     default: artifact
   class:
     type: string
-    description: Class name.
+    description: The log's class name.
     default: ''
   method:
     type: string
-    description: Method name.
+    description: The log's method name.
     default: ''
   thread:
     type: string
-    description: Thread.
+    description: Thread ID reported with the log.
     default: "${CIRCLE_WORKFLOW_ID}"
-  newline_pattern:
-    type: string
-    description: Regular expression to split records.
-    default: '\n|\r|\r\n'
 steps:
   - jq/install
   - run:
