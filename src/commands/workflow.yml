@@ -1,11 +1,11 @@
 description: |
-  Build workflow logs and stats.
+  For internal use only. Defines the command to help ship workflow logs to Coralogix.
 parameters:
   circle-token:
     type: env_var_name
     description: |
-      Enter your CircleCI Personal Access Token for interacting with the API.
-      You may generate one here: https://circleci.com/account/api
+      Your CircleCI personal access token for interacting with the API.
+      You can generate one here: https://circleci.com/account/api
     default: CIRCLE_TOKEN
   keep_artifacts:
     type: boolean
