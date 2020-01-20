@@ -16,6 +16,9 @@ steps:
       name: Build workflow data
       when: always
       command: |
+        set -x
+        set -e
+      
         WORKFLOW=$(curl -s -H "Circle-Token: ${<<parameters.circle-token>>}" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID")
         WORKFLOW_JOBS=$(curl -s -H "Circle-Token: ${<<parameters.circle-token>>}" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID/jobs" | jq '.items')
         WORKFLOW_LENGTH=$(echo "$WORKFLOW_JOBS" | jq 'length')
