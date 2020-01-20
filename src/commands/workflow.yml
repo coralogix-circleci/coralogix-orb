@@ -17,14 +17,14 @@ steps:
       when: always
       command: |
         WORKFLOW=$(curl -s -H "Circle-Token: ${<<parameters.circle-token>>}" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID")
-        WORKFLOW_JOBS=$(curl -s -H "Circle-Token: ${<<parameters.circle-token>>}" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID/jobs" | jq '.items')
+        WORKFLOW_JOBS=$(curl -s -H "Circle-Token: ${<<parameters.circle-token>>}" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID/job" | jq '.items')
         WORKFLOW_LENGTH=$(echo "$WORKFLOW_JOBS" | jq 'length')
         PROJECT_SLUG=$(echo "$WORKFLOW" | jq -r '.project_slug')
 
         mkdir -p /tmp/coralogix
         rm -f /tmp/coralogix/workflow-*.log
         for (( i=0; i<$WORKFLOW_LENGTH; )); do
-            WORKFLOW_JOBS=$(curl -s -H "Circle-Token: ${<<parameters.circle-token>>}" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID/jobs" | jq '.items')
+            WORKFLOW_JOBS=$(curl -s -H "Circle-Token: ${<<parameters.circle-token>>}" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID/job" | jq '.items')
             JOB_NUMBER=$(echo "$WORKFLOW_JOBS" | jq -r "sort_by(.job_number) | .[$i].job_number")
             JOB_STATUS=$(echo "$WORKFLOW_JOBS" | jq -r "sort_by(.job_number) | .[$i].status")
             JOB_NAME=$(echo "$WORKFLOW_JOBS" | jq -r "sort_by(.job_number) | .[$i].name")
