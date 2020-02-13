@@ -56,7 +56,7 @@ steps:
           split -C 2M -d "$LOG_FILE" ''
         popd
         for bulk in $LOG_BULKS/*; do
-          LOG_BULK=$(jq -nMc \
+          jq -nMc \
             --rawfile lines "$bulk" \
             --arg private_key "${<<parameters.private_key>>}" \
             --arg application "<<parameters.application>>" \
@@ -81,7 +81,6 @@ steps:
                 "threadId": $thread
               }
             ]
-          }')
-          curl -X POST -H 'Content-Type: application/json' -d "$LOG_BULK" -s 'https://api.coralogix.com/api/v1/logs' > /dev/null
+          }' | curl -X POST -H 'Content-Type: application/json' -d @- -s 'https://api.coralogix.com/api/v1/logs'
         done
         rm -rf "$LOG_BULKS"
