@@ -3,7 +3,7 @@ description: |
   Integrate your CircleCI workflows and jobs pipeline with Coralogix to automatically receive reports and analyze version upgrades for their impact on the overall quality of your production system.
   Learn more: https://coralogix.com/category/tutorials/
 display:
-  home_url: http:/www.coralogix.com
+  home_url: https://coralogix.com
   source_url: https://github.com/coralogix-circleci/coralogix-orb
 orbs:
   jq: circleci/jq@1.9.0
