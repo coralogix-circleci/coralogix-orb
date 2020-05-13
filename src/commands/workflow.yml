@@ -16,11 +16,14 @@ steps:
       name: Build workflow data
       when: always
       command: |
+        if [ -z "${<<parameters.circle-token>>}" ]; then
+            echo "CircleCI API token is not set!"
+            exit 0
+        fi
         WORKFLOW=$(curl -s -H "Circle-Token: ${<<parameters.circle-token>>}" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID")
         WORKFLOW_JOBS=$(curl -s -H "Circle-Token: ${<<parameters.circle-token>>}" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID/job" | jq '.items')
         WORKFLOW_LENGTH=$(echo "$WORKFLOW_JOBS" | jq 'length')
         PROJECT_SLUG=$(echo "$WORKFLOW" | jq -r '.project_slug')
-
         mkdir -p /tmp/coralogix
         rm -f /tmp/coralogix/workflow-*.log
         for (( i=0; i<$WORKFLOW_LENGTH; )); do
@@ -28,8 +31,10 @@ steps:
             JOB_NUMBER=$(echo "$WORKFLOW_JOBS" | jq -r "sort_by(.job_number) | .[$i].job_number")
             JOB_STATUS=$(echo "$WORKFLOW_JOBS" | jq -r "sort_by(.job_number) | .[$i].status")
             JOB_NAME=$(echo "$WORKFLOW_JOBS" | jq -r "sort_by(.job_number) | .[$i].name")
-            if [[ $JOB_NAME != coralogix/* ]]; then
-                if [ "$JOB_STATUS" != "running" ] && [ "$JOB_STATUS" != "blocked" ]; then
+            if [[ $JOB_NAME == coralogix/* ]] || [ $JOB_NUMBER == "null" ]; then
+                i="$((i+1))"
+            else
+                if [ "$JOB_STATUS" == "success" ] || [ "$JOB_STATUS" == "failed" ]; then
                     echo "Collecting data for job $JOB_NAME..."
                     JOB=$(curl -s -H "Circle-Token: ${<<parameters.circle-token>>}" "https://circleci.com/api/v1.1/project/$PROJECT_SLUG/$JOB_NUMBER")
                     JOB_LOGS=$(echo "$JOB" | jq '.steps[].actions[].output_url | select(.!=null)')
@@ -39,13 +44,14 @@ steps:
                     fi
                     echo "$JOB" | jq -c 'del(.steps, .circle_yml)' >> /tmp/coralogix/workflow-stats.log
                     echo "$JOB_LOGS" | xargs -n1 curl -s --output - --compressed | jq -r '.[].message' >> /tmp/coralogix/workflow-logs.log
+                    echo "Job $JOB_NAME is successfully added to report..."
                     i="$((i+1))"
+                elif [ "$JOB_STATUS" == "blocked" ] || [ "$JOB_STATUS" == "on_hold" ]; then
+                    echo "Job $JOB_NAME is skipped..."
                 else
                     echo "Job $JOB_NAME is $JOB_STATUS..."
                     sleep 10
                 fi
-            else
-                i="$((i+1))"
             fi
         done
   - when:
