@@ -43,7 +43,7 @@ steps:
                 echo "$JOB" | jq -c 'del(.steps, .circle_yml)' >> /tmp/coralogix/workflow-stats.log
                 echo "$JOB_LOGS" | xargs -n1 curl -s --output - --compressed | jq -r '.[].message' >> /tmp/coralogix/workflow-logs.log
                 echo "Job $JOB_NAME is successfully added to report..."
-            elif [ "$JOB_STATUS" == "blocked" ] || [ "$JOB_STATUS" == "on_hold" ]; then
+            elif [ "$JOB_STATUS" == "blocked" ] || [ "$JOB_STATUS" == "on_hold" ] || [ "$JOB_STATUS" == "canceled" ]; then
                 echo "Job $JOB_NAME is $JOB_STATUS. Skipping..."
             else
                 echo "Job $JOB_NAME is $JOB_STATUS..."
