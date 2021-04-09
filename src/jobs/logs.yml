@@ -8,6 +8,10 @@ parameters:
       Your CircleCI personal access token for interacting with the API.
       You can generate one here: https://circleci.com/account/api
     default: CIRCLE_TOKEN
+  endpoint:
+    type: string
+    description: Coralogix API endpoint.
+    default: api.coralogix.com
   private_key:
     type: env_var_name
     description: Private key provided by Coralogix (under Settings --> Send Your Logs).
@@ -39,6 +43,7 @@ steps:
       keep_artifacts: <<parameters.keep_artifacts>>
   - send:
       file: /tmp/coralogix/workflow-logs.log
+      endpoint: <<parameters.endpoint>>
       private_key: <<parameters.private_key>>
       application: <<parameters.application>>
       subsystem: <<parameters.subsystem>>

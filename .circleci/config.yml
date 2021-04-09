@@ -15,7 +15,7 @@ commands:
     steps:
       - coralogix/tag:
           tag: v1.0.0
-          application: coralogix-orb
+          applications: coralogix-orb
           subsystems: ci
 jobs:
   integration-tests:

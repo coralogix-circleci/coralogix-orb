@@ -8,6 +8,10 @@ parameters:
     type: string
     description: Regular expression to split records in the file.
     default: '\n|\r|\r\n'
+  endpoint:
+    type: string
+    description: Coralogix API endpoint.
+    default: api.coralogix.com
   private_key:
     type: env_var_name
     description: Private key provided by Coralogix (under Settings --> Send Your Logs).
@@ -81,6 +85,6 @@ steps:
                 "threadId": $thread
               }
             ]
-          }' | curl -X POST -H 'Content-Type: application/json' -d @- -s 'https://api.coralogix.com/api/v1/logs'
+          }' | curl -X POST -H 'Content-Type: application/json' -d @- -s 'https://<<parameters.endpoint>>/api/v1/logs'
         done
         rm -rf "$LOG_BULKS"

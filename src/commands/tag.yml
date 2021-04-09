@@ -2,16 +2,22 @@ description: |
   This command is used to create a tag (and a report) for the workflow in Coralogix, helping you understand what effect it has on your production.
   Learn more at https://coralogix.com/tutorials/software-builds-display/
 parameters:
-  private_key:
+  endpoint:
+    type: string
+    description: Coralogix API endpoint.
+    default: webapi.coralogix.com
+  api_key:
     type: env_var_name
-    description: Private key provided by Coralogix (under Settings --> Send Your Logs).
-    default: CORALOGIX_PRIVATE_KEY
+    description: API key provided by Coralogix (under Settings --> Account --> API Access).
+    default: CORALOGIX_API_KEY
   tag:
     type: string
     description: Name presented for the tag.
-  application:
+  applications:
     type: string
-    description: Your application name.
+    description: |
+      Your application name.
+      You can set more than one application name by using ',' comma as a delimiter between applications names.
   subsystems:
     type: string
     description: |
@@ -28,4 +34,14 @@ steps:
   - run:
       name: Push Coralogix Tag
       command: |
-        curl "https://api.coralogix.com/api/v1/addTag?key=${<<parameters.private_key>>}&application=<<parameters.application>>&subsystem=<<parameters.subsystems>>&name=<<parameters.tag>>&iconUrl=<<parameters.icon>>"
+        jq -nMc \
+          --arg name "<<parameters.tag>>" \
+          --arg applications "<<parameters.applications>>" \
+          --arg subsystems "<<parameters.subsystems>>" \
+          --arg icon "<<parameters.icon>>" '{
+          "timestamp": (now * 1000),
+          "name": $name,
+          "application": $applications | split(","),
+          "subsystem": $subsystems | split(","),
+          "iconUrl": $icon
+        } | if $icon != "" then .iconUrl |= $icon else . end' | curl -X POST -H "Authorization: Bearer ${<<parameters.api_key>>}" -H "Content-Type: application/json" -d @- -sSL 'https://<<parameters.endpoint>>/api/v1/external/tags'
