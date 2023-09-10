@@ -8,4 +8,3 @@
 CircleCI integration tools for Coralogix.
 
 https://circleci.com/orbs/registry/orb/coralogix/coralogix
-
