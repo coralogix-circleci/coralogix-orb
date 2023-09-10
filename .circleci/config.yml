@@ -20,7 +20,7 @@ commands:
 jobs:
   integration-tests:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/base:current
     steps:
       - checkout
       - test-send
