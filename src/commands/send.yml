@@ -49,4 +49,4 @@ steps:
   - run:
       name: Send to Coralogix
       when: always
-      command: <<include(send.sh)>>
+      command: <<include(scripts/send.sh)>>
