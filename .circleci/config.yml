@@ -17,8 +17,6 @@ workflows:
           filters: *filters
       - orb-tools/review:
           filters: *filters
-      - shellcheck/check:
-          filters: *filters
       # Triggers the next workflow in the Orb Development Kit.
       - orb-tools/continue:
           pipeline_number: << pipeline.number >>

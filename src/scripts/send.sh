@@ -1,3 +1,4 @@
+#!/bin/bash
 if [ ! -f "<<parameters.file>>" ]; then
             echo "File not found!"
             exit 0

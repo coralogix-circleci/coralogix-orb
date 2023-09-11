@@ -1,3 +1,4 @@
+#!/bin/bash
 jq -nMc \
   --arg name "<<parameters.tag>>" \
   --arg applications "<<parameters.applications>>" \

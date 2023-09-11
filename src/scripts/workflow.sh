@@ -1,3 +1,4 @@
+#!/bin/bash
 if [ -z "${<<parameters.circle_token>>}" ]; then
             echo "CircleCI API token is not set!"
             exit 0
