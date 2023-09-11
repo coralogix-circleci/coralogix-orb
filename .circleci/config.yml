@@ -1,7 +1,17 @@
 version: 2.1
 orbs:
   orb-tools: circleci/orb-tools@10.0
-  coralogix: coralogix/coralogix@dev:alpha
+  coralogix: coralogix/coralogix@<<pipeline.parameters.dev-orb-version>>
+parameters:
+  run-integration-tests:
+    description: An internal flag.
+    type: boolean
+    default: false
+  dev-orb-version:
+    description: >
+      The development version of the orb to test.
+    type: string
+    default: "dev:alpha"
 commands:
   test-send:
     steps:
@@ -47,3 +57,19 @@ workflows:
           context: orb-publishing
           requires:
             - orb-tools/publish-dev
+  integration-test_deploy:
+    when: << pipeline.parameters.run-integration-tests >>
+    jobs:
+      - orb-tools/dev-promote-prod-from-commit-subject:
+          orb-name: coralogix/coralogix
+          context: orb-publishing
+          add-pr-comment: false
+          fail-if-semver-not-indicated: true
+          publish-version-tag: false
+          requires:
+            - orb-tools/publish-dev
+          filters:
+            branches:
+              only:
+                - master
+                - main
