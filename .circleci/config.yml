@@ -1,103 +1,28 @@
 version: 2.1
+setup: true
 orbs:
-  orb-tools: circleci/orb-tools@8.3.0
-  coralogix: coralogix/coralogix@dev:alpha
-commands:
-  test-send:
-    steps:
-      - run: echo "Hello world!" > build.log
-      - coralogix/send:
-          file: build.log
-          application: coralogix-orb
-          subsystem: ci
-          category: tests
-  test-tag:
-    steps:
-      - coralogix/tag:
-          tag: v1.0.0
-          applications: coralogix-orb
-          subsystems: ci
-jobs:
-  integration-tests:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - checkout
-      - test-send
-      - test-tag
+  orb-tools: circleci/orb-tools@12.0
+  shellcheck: circleci/shellcheck@3.1
+
+filters: &filters
+  tags:
+    only: /.*/
+
 workflows:
-  lint_pack-validate_publish-dev:
+  lint-pack:
     jobs:
-      - orb-tools/lint
+      - orb-tools/lint:
+          filters: *filters
       - orb-tools/pack:
-          requires:
-            - orb-tools/lint
-      - orb-tools/publish-dev:
-          orb-name: coralogix/coralogix
-          requires:
-            - orb-tools/pack
-      - orb-tools/trigger-integration-workflow:
-          name: trigger-integration-dev
-          ssh-fingerprints: 98:b7:83:fc:ed:b0:6a:9a:ed:7d:01:9a:3e:46:c8:cd
-          requires:
-            - orb-tools/publish-dev
-          filters:
-            branches:
-              ignore: master
-      - orb-tools/trigger-integration-workflow:
-          name: trigger-integration-master
-          ssh-fingerprints: 98:b7:83:fc:ed:b0:6a:9a:ed:7d:01:9a:3e:46:c8:cd
-          tag: master
-          requires:
-            - orb-tools/publish-dev
-          filters:
-            branches:
-              only: master
-  integration-tests_prod-release:
-    jobs:
-      - integration-tests:
-          name: integration-tests-dev
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /integration-.*/
-      - integration-tests:
-          name: integration-tests-master
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-.*/
-      - orb-tools/dev-promote-prod:
-          name: dev-promote-patch
-          orb-name: coralogix/coralogix
-          requires:
-            - integration-tests-master
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-patch.*/
-      - orb-tools/dev-promote-prod:
-          name: dev-promote-minor
-          release: minor
-          orb-name: coralogix/coralogix
-          requires:
-            - integration-tests-master
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-minor.*/
-      - orb-tools/dev-promote-prod:
-          name: dev-promote-major
-          release: major
-          orb-name: coralogix/coralogix
-          requires:
-            - integration-tests-master
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-major.*/
+          filters: *filters
+      - orb-tools/review:
+          filters: *filters
+      - shellcheck/check:
+          filters: *filters
+      # Triggers the next workflow in the Orb Development Kit.
+      - orb-tools/continue:
+          pipeline_number: << pipeline.number >>
+          vcs_type: << pipeline.project.type >>
+          orb_name: coralogix
+          requires: [orb-tools/lint, orb-tools/pack, orb-tools/review, shellcheck/check]
+          filters: *filters
