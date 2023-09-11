@@ -57,9 +57,6 @@ workflows:
           context: orb-publishing
           requires:
             - orb-tools/publish-dev
-  integration-test_deploy:
-    when: << pipeline.parameters.run-integration-tests >>
-    jobs:
       - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: coralogix/coralogix
           context: orb-publishing
