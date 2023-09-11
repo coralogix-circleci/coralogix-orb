@@ -1,6 +1,6 @@
 ---
 description: |
-  This job is used to get the final report of a workflow job in 
+  This job is used to get the final report of a workflow job in
   Coralogix where you can analyzea and aggregate the results.
 parameters:
   circle_token:
@@ -15,11 +15,11 @@ parameters:
     default: api.coralogix.com
   private_key:
     type: env_var_name
-    description: Private key provided by Coralogix (under Settings --> Send Your Logs).
+    description: Private key provided by Coralogix.
     default: CORALOGIX_PRIVATE_KEY
   keep_artifacts:
     type: boolean
-    description: Keep temporary log files generated during the job after being sent to coralogix.
+    description: Keep log after being sent to coralogix.
     default: false
   application:
     type: string
