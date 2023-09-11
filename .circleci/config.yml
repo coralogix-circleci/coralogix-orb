@@ -22,6 +22,10 @@ jobs:
     docker:
       - image: cimg/base:current
     steps:
+      - run: apk update
+      - run: apk upgrade
+      - run: apk add --no-cache openssh
+      - run: apk add git
       - checkout
       - test-send
       - test-tag
