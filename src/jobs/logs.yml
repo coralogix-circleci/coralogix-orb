@@ -1,6 +1,9 @@
+---
 description: |
-  This job is used to debug CircleCI workflow jobs in Coralogix by sending all the debug logs.
-  Note that this may generate a large amount of data, and is recommended for debugging purposes only.
+  This job is used to debug CircleCI workflow jobs in Coralogix 
+  by sending all the debug logs.
+  Note that this may generate a large amount of data, and is 
+  recommended for debugging purposes only.
 parameters:
   circle-token:
     type: env_var_name

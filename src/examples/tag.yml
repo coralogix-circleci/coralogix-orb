@@ -1,6 +1,10 @@
+---
 description: |
-  This example shows how you can create a tag (and a report) for the workflow in Coralogix.
-  By adding our Orb and the coralogix/tag step, you can create tag (and a report) for this workflow in your Coralogix account to understand what effect it has on your production.
+  This example shows how you can create a tag (and a report) 
+  for the workflow in Coralogix.
+  By adding our Orb and the coralogix/tag step, you can create tag 
+  (and a report) for this workflow in your Coralogix account to 
+  understand what effect it has on your production.
   Learn more at https://coralogix.com/tutorials/software-builds-display/
 usage:
   version: 2.1

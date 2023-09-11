@@ -1,6 +1,11 @@
+---
 description: |
-  This example shows how you can debug a workflow job in Coralogix. By adding our Orb and the coralogix/logs job at the end of the flow, you'll receive all logs CircleCI generates during the workflow in your Coralogix account, helping you debug the different jobs.
-  Note that this may generate a large amount of data, and is recommended for debugging purposes only.
+  This example shows how you can debug a workflow job in Coralogix. 
+  By adding our Orb and the coralogix/logs job at the end of the flow, 
+  you'll receive all logs CircleCI generates during the workflow in 
+  your Coralogix account, helping you debug the different jobs.
+  Note that this may generate a large amount of data, and is recommended 
+  for debugging purposes only.
 usage:
   version: 2.1
   orbs:

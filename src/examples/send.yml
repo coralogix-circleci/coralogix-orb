@@ -1,7 +1,12 @@
+---
 description: |
-  This example shows how you can send additional 3rd party logs generated during your workflow job to Coralogix.
-  By adding our Orb and the coralogix/send step, you can send additional logs from an external file to your Coralogix account.
-  This is especially useful if one of the stages of your job generates an external file with logs which you'd like to report to Coralogix and analyze along with the rest of your logs.
+  This example shows how you can send additional 3rd party logs
+  generated during your workflow job to Coralogix.
+  By adding our Orb and the coralogix/send step, you can send 
+  additional logs from an external file to your Coralogix account.
+  This is especially useful if one of the stages of your job generates
+   an external file with logs which you'd like to report to Coralogix 
+   and analyze along with the rest of your logs.
 usage:
   version: 2.1
   orbs:

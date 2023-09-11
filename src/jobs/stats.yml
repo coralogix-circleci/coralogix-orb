@@ -1,5 +1,7 @@
+---
 description: |
-  This job is used to get the final report of a workflow job in Coralogix where you can analyzea and aggregate the results.
+  This job is used to get the final report of a workflow job in 
+  Coralogix where you can analyzea and aggregate the results.
 parameters:
   circle-token:
     type: env_var_name
