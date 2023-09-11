@@ -41,6 +41,7 @@ jobs:
       - test-tag
 workflows:
   lint_pack-validate_publish-dev:
+    unless: << pipeline.parameters.run-integration-tests >>
     jobs:
       - orb-tools/lint
       - orb-tools/pack:
@@ -57,14 +58,15 @@ workflows:
           context: orb-publishing
           requires:
             - orb-tools/publish-dev
+  integration-test_deploy:
+    when: << pipeline.parameters.run-integration-tests >>
+    jobs:
       - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: coralogix/coralogix
           context: orb-publishing
           add-pr-comment: false
           fail-if-semver-not-indicated: true
           publish-version-tag: false
-          requires:
-            - orb-tools/publish-dev
           filters:
             branches:
               only:
