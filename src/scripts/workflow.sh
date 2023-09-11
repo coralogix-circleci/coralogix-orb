@@ -1,15 +1,15 @@
-if [ -z "${<<parameters.circle-token>>}" ]; then
+if [ -z "${<<parameters.circle_token>>}" ]; then
             echo "CircleCI API token is not set!"
             exit 0
         fi
-        WORKFLOW=$(curl -s -H "Circle-Token: ${<<parameters.circle-token>>}" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID")
-        WORKFLOW_JOBS=$(curl -s -H "Circle-Token: ${<<parameters.circle-token>>}" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID/job" | jq '.items | map(select(.name|test("^coralogix/(stats|logs)")|not))')
+        WORKFLOW=$(curl -s -H "circle_token: ${<<parameters.circle_token>>}" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID")
+        WORKFLOW_JOBS=$(curl -s -H "circle_token: ${<<parameters.circle_token>>}" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID/job" | jq '.items | map(select(.name|test("^coralogix/(stats|logs)")|not))')
         WORKFLOW_LENGTH=$(echo "$WORKFLOW_JOBS" | jq 'length')
         PROJECT_SLUG=$(echo "$WORKFLOW" | jq -r '.project_slug')
         mkdir -p /tmp/coralogix
         rm -f /tmp/coralogix/workflow-*.log
         for (( i=0; i<$WORKFLOW_LENGTH; )); do
-            WORKFLOW_JOBS=$(curl -s -H "Circle-Token: ${<<parameters.circle-token>>}" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID/job" | jq '.items | map(select(.name|test("^coralogix/(stats|logs)")|not))')
+            WORKFLOW_JOBS=$(curl -s -H "circle_token: ${<<parameters.circle_token>>}" "https://circleci.com/api/v2/workflow/$CIRCLE_WORKFLOW_ID/job" | jq '.items | map(select(.name|test("^coralogix/(stats|logs)")|not))')
             JOB_NUMBER=$(echo "$WORKFLOW_JOBS" | jq -r ".[$i].job_number")
             JOB_NAME=$(echo "$WORKFLOW_JOBS" | jq -r ".[$i].name")
             JOB_STATUS=$(echo "$WORKFLOW_JOBS" | jq -r ".[$i].status")
@@ -17,7 +17,7 @@ if [ -z "${<<parameters.circle-token>>}" ]; then
             if [ "$JOB_STATUS" == "success" ] || [ "$JOB_STATUS" == "failed" ]; then
                 if [ "$JOB_NUMBER" != "null" ]; then
                     echo "Collecting data for job $JOB_NAME..."
-                    JOB=$(curl -s -H "Circle-Token: ${<<parameters.circle-token>>}" "https://circleci.com/api/v1.1/project/$PROJECT_SLUG/$JOB_NUMBER")
+                    JOB=$(curl -s -H "circle_token: ${<<parameters.circle_token>>}" "https://circleci.com/api/v1.1/project/$PROJECT_SLUG/$JOB_NUMBER")
                     JOB_LOGS=$(echo "$JOB" | jq '.steps[].actions[].output_url | select(.!=null)')
                     if [ -z "$JOB_LOGS" ]; then
                         sleep 10

@@ -5,7 +5,7 @@ description: |
   Note that this may generate a large amount of data, and is
   recommended for debugging purposes only.
 parameters:
-  circle-token:
+  circle_token:
     type: env_var_name
     description: |
       Your CircleCI personal access token for interacting with the API.
@@ -42,7 +42,7 @@ parameters:
 executor: default
 steps:
   - workflow:
-      circle-token: <<parameters.circle-token>>
+      circle_token: <<parameters.circle_token>>
       keep_artifacts: <<parameters.keep_artifacts>>
   - send:
       file: /tmp/coralogix/workflow-logs.log

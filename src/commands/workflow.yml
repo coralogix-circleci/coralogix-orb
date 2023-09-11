@@ -2,7 +2,7 @@
 description: |
   Defines the command to help ship workflow logs to Coralogix.
 parameters:
-  circle-token:
+  circle_token:
     type: env_var_name
     description: |
       Your CircleCI personal access token for interacting with the API.
