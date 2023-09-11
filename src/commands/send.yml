@@ -1,5 +1,7 @@
+---
 description: |
-  This command is used to send additional 3rd party logs generated during your workflow job to Coralogix.
+  This command is used to send additional 3rd party logs generated during
+  your workflow job to Coralogix.
 parameters:
   file:
     type: string
@@ -14,7 +16,7 @@ parameters:
     default: api.coralogix.com
   private_key:
     type: env_var_name
-    description: Private key provided by Coralogix (under Settings --> Send Your Logs).
+    description: Private key provided by Coralogix.
     default: CORALOGIX_PRIVATE_KEY
   application:
     type: string

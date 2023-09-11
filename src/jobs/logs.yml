@@ -1,8 +1,8 @@
 ---
 description: |
-  This job is used to debug CircleCI workflow jobs in Coralogix 
+  This job is used to debug CircleCI workflow jobs in Coralogix
   by sending all the debug logs.
-  Note that this may generate a large amount of data, and is 
+  Note that this may generate a large amount of data, and is
   recommended for debugging purposes only.
 parameters:
   circle-token:
@@ -17,11 +17,11 @@ parameters:
     default: api.coralogix.com
   private_key:
     type: env_var_name
-    description: Private key provided by Coralogix (under Settings --> Send Your Logs).
+    description: Private key provided by Coralogix.
     default: CORALOGIX_PRIVATE_KEY
   keep_artifacts:
     type: boolean
-    description: Keep temporary log files generated during the job after being sent to coralogix.
+    description: Keep temporary files generated after being sent to coralogix.
     default: false
   application:
     type: string

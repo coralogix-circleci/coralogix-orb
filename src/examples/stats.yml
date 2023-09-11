@@ -1,6 +1,6 @@
 ---
 description: |
-  This example shows how you can send the 
+  This example shows how you can send the
   final report of a workflow job to Coralogix.
   By adding our Orb and the coralogix/stats job at the end of the flow,
   you'll receive the report automatically in your Coralogix account and

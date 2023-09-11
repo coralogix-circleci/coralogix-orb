@@ -1,6 +1,9 @@
+---
 version: 2.1
 description: |
-  Integrate your CircleCI workflows and jobs pipeline with Coralogix to automatically receive reports and analyze version upgrades for their impact on the overall quality of your production system.
+  Integrate your CircleCI workflows and jobs pipeline with
+  Coralogix to automatically receive reports and analyze version
+  upgrades for their impact on the overall quality of your production system.
   Learn more: https://coralogix.com/category/tutorials/
 display:
   home_url: https://coralogix.com
