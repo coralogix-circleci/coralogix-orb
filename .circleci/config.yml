@@ -40,7 +40,7 @@ workflows:
           orb-name: coralogix/coralogix
           requires:
             - orb-tools/pack
-      - orb-tools/trigger-integration-workflow:
+      - orb-tools/trigger-integration-tests-workflow:
           name: trigger-integration-dev
           ssh-fingerprints: 98:b7:83:fc:ed:b0:6a:9a:ed:7d:01:9a:3e:46:c8:cd
           requires:
@@ -48,7 +48,7 @@ workflows:
           filters:
             branches:
               ignore: master
-      - orb-tools/trigger-integration-workflow:
+      - orb-tools/trigger-integration-tests-workflow:
           name: trigger-integration-master
           ssh-fingerprints: 98:b7:83:fc:ed:b0:6a:9a:ed:7d:01:9a:3e:46:c8:cd
           tag: master
