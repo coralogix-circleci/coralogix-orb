@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  orb-tools: circleci/orb-tools@10.1.0
+  orb-tools: circleci/orb-tools@8.27.6
   coralogix: coralogix/coralogix@dev:alpha
 commands:
   test-send:
