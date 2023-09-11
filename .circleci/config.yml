@@ -1,7 +1,17 @@
 version: 2.1
 orbs:
-  orb-tools: circleci/orb-tools@8.3.0
-  coralogix: coralogix/coralogix@dev:alpha
+  orb-tools: circleci/orb-tools@10.0
+  coralogix: coralogix/coralogix@<<pipeline.parameters.dev-orb-version>>
+parameters:
+  run-integration-tests:
+    description: An internal flag.
+    type: boolean
+    default: false
+  dev-orb-version:
+    description: >
+      The development version of the orb to test.
+    type: string
+    default: "dev:alpha"
 commands:
   test-send:
     steps:
@@ -20,13 +30,18 @@ commands:
 jobs:
   integration-tests:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/base:current
     steps:
+      - run: apk update
+      - run: apk upgrade
+      - run: apk add --no-cache openssh
+      - run: apk add git
       - checkout
       - test-send
       - test-tag
 workflows:
   lint_pack-validate_publish-dev:
+    unless: << pipeline.parameters.run-integration-tests >>
     jobs:
       - orb-tools/lint
       - orb-tools/pack:
@@ -34,70 +49,26 @@ workflows:
             - orb-tools/lint
       - orb-tools/publish-dev:
           orb-name: coralogix/coralogix
+          context: orb-publishing
           requires:
+            - orb-tools/lint
             - orb-tools/pack
-      - orb-tools/trigger-integration-workflow:
+      - orb-tools/trigger-integration-tests-workflow:
           name: trigger-integration-dev
-          ssh-fingerprints: 98:b7:83:fc:ed:b0:6a:9a:ed:7d:01:9a:3e:46:c8:cd
+          context: orb-publishing
           requires:
             - orb-tools/publish-dev
-          filters:
-            branches:
-              ignore: master
-      - orb-tools/trigger-integration-workflow:
-          name: trigger-integration-master
-          ssh-fingerprints: 98:b7:83:fc:ed:b0:6a:9a:ed:7d:01:9a:3e:46:c8:cd
-          tag: master
-          requires:
-            - orb-tools/publish-dev
-          filters:
-            branches:
-              only: master
-  integration-tests_prod-release:
+  integration-test_deploy:
+    when: << pipeline.parameters.run-integration-tests >>
     jobs:
-      - integration-tests:
-          name: integration-tests-dev
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /integration-.*/
-      - integration-tests:
-          name: integration-tests-master
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-.*/
-      - orb-tools/dev-promote-prod:
-          name: dev-promote-patch
+      - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: coralogix/coralogix
-          requires:
-            - integration-tests-master
+          context: orb-publishing
+          add-pr-comment: false
+          fail-if-semver-not-indicated: true
+          publish-version-tag: false
           filters:
             branches:
-              ignore: /.*/
-            tags:
-              only: /master-patch.*/
-      - orb-tools/dev-promote-prod:
-          name: dev-promote-minor
-          release: minor
-          orb-name: coralogix/coralogix
-          requires:
-            - integration-tests-master
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-minor.*/
-      - orb-tools/dev-promote-prod:
-          name: dev-promote-major
-          release: major
-          orb-name: coralogix/coralogix
-          requires:
-            - integration-tests-master
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /master-major.*/
+              only:
+                - master
+                - main
